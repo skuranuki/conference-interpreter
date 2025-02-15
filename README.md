@@ -1,4 +1,4 @@
-# フォルダ校正
+# フォルダ構成
 ```
 project-root/
 ├── backend/            # Go (Fiber) のバックエンド
