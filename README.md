@@ -1,4 +1,4 @@
-# フォルダ構成testあああ
+# フォルダ構成
 ```
 project-root/
 ├── backend/            # Go (Fiber) のバックエンド
