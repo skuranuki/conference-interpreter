@@ -1,4 +1,3 @@
-# フォルダ構成
 project-root/
 │── backend/            # Go (Fiber) のバックエンド
 │   ├── main.go         # エントリーポイント
@@ -6,8 +5,8 @@ project-root/
 │   │   ├── transcribe.go  # Whisper APIを呼び出し
 │   ├── config/         # 設定ファイル
 │   │   ├── env.go      # 環境変数の読み込み
-│   ├── go.mod         # Goモジュール
-│   ├── go.sum         # 依存管理
+│   ├── go.mod          # Goモジュール
+│   ├── go.sum          # 依存管理
 │
 │── frontend/           # Next.js (TypeScript) のフロントエンド
 │   ├── public/         # 音声ファイル保存用
