@@ -1,3 +1,5 @@
+# フォルダ校正
+```
 project-root/
 ├── backend/            # Go (Fiber) のバックエンド
 │   ├── main.go         # エントリーポイント
@@ -21,3 +23,4 @@ project-root/
 │   ├── tsconfig.json   # TypeScript設定
 │
 └── docker-compose.yml  # コンテナ管理（後で追加可）
+```
