@@ -4,6 +4,23 @@
 ・フロントでテキストを表示
 ```
 
+# install
+```
+Goのinstall（後でdockerで実装）
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
+eval "$(/opt/homebrew/bin/brew shellenv)"
+
+which brew
+
+brew install go
+
+cd backend
+go mod init project-root/backend
+
+```
+
 # フォルダ構成
 ```
 project-root/
