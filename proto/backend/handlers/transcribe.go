@@ -1,40 +1,46 @@
 package handlers
-//whisper APIを呼び出して音声をテキストに変換
+
 import (
-	"fmt"
-	"net/http"
+	"io/ioutil"
+	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/go-resty/resty/v2"
 )
 
-// Whisper API を呼び出して音声をテキストに変換
 func Transcribe(c *fiber.Ctx) error {
-	// アップロードされたファイルを取得
+	// ファイルを取得
 	file, err := c.FormFile("audio")
 	if err != nil {
-		return c.Status(fiber.StatusBadRequest).SendString("ファイルを取得できませんでした")
+		return c.Status(400).SendString("音声ファイルの取得に失敗しました")
 	}
 
 	// 一時ファイルとして保存
-	filePath := fmt.Sprintf("./uploads/%s", file.Filename)
-	err = c.SaveFile(file, filePath)
+	tempFile, err := os.CreateTemp("", "audio-*.wav")
 	if err != nil {
-		return c.Status(fiber.StatusInternalServerError).SendString("ファイルの保存に失敗しました")
+		log.Println("一時ファイル作成エラー:", err)
+		return c.Status(500).SendString("一時ファイルの作成に失敗しました")
+	}
+	defer os.Remove(tempFile.Name())
+
+	fileData, err := file.Open()
+	if err != nil {
+		return c.Status(500).SendString("ファイルのオープンに失敗しました")
+	}
+	defer fileData.Close()
+
+	data, err := ioutil.ReadAll(fileData)
+	if err != nil {
+		return c.Status(500).SendString("ファイルの読み込みに失敗しました")
 	}
 
-	// Whisper API に送信
-	client := resty.New()
-	resp, err := client.R().
-		SetFile("file", filePath).
-		SetHeader("Authorization", "Bearer "+os.Getenv("WHISPER_API_KEY")).
-		Post("https://api.openai.com/v1/audio/transcriptions")
-
+	_, err = tempFile.Write(data)
 	if err != nil {
-		return c.Status(http.StatusInternalServerError).SendString("Whisper API の呼び出しに失敗しました")
+		return c.Status(500).SendString("ファイルの保存に失敗しました")
 	}
 
-	// 結果を返す
-	return c.SendString(resp.String())
+	// ここで音声をテキストに変換する処理（仮）
+	transcribedText := "音声認識結果（仮）"
+
+	return c.JSON(fiber.Map{"text": transcribedText})
 }

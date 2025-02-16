@@ -24,7 +24,7 @@ go get github.com/gofiber/fiber/v2
 
 go get github.com/go-resty/resty/v2
 
-nodeのinstall
+nodeのinstall（いらんかも）
 brew install node
 ```
 
