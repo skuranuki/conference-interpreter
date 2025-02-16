@@ -26,6 +26,11 @@ go get github.com/go-resty/resty/v2
 
 nodeのinstall（いらんかも）
 brew install node
+
+実行
+go run main.go
+rm -rf .next  
+npm run dev
 ```
 
 # フォルダ構成
