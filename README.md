@@ -59,5 +59,3 @@ project-root/
 │
 └── docker-compose.yml  # コンテナ管理（後で追加可）
 ```
-
-わーーーーー
