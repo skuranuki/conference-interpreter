@@ -19,9 +19,13 @@ brew install go
 cd backend
 go mod init project-root/backend
 
+APIのinstall
 go get github.com/gofiber/fiber/v2
 
 go get github.com/go-resty/resty/v2
+
+nodeのinstall
+brew install node
 ```
 
 # フォルダ構成
