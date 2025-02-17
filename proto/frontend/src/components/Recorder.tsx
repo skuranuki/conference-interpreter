@@ -38,7 +38,6 @@ const Recorder = ({ onTranscribe }: { onTranscribe: (text: string) => void }) =>
           body: formData,
           headers: {
             "Accept": "application/json",
-            "Content-Type": "multipart/form-data",
           },
           mode: "cors", // CORS設定
         });
