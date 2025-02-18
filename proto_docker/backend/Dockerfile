@@ -12,4 +12,5 @@ RUN go build -o main .
 
 EXPOSE 3001
 
-CMD ["./main"]
+
+CMD ["/app/main"]  # 実行コマンドを修正
