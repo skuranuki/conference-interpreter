@@ -8,9 +8,9 @@ RUN go mod download
 
 COPY . .
 
-RUN go build -o main . 
+# 出力ファイルを明示的に /app/main に指定
+RUN go build -o /app/main .
 
 EXPOSE 3001
 
-
-CMD ["/app/main"]  # 実行コマンドを修正
+CMD ["/app/main"]

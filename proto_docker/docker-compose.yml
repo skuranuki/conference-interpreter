@@ -5,8 +5,7 @@ services:
     build: ./backend
     ports:
       - "3001:3001"
-    volumes:
-      - ./backend:/app
+
     environment:
       - GO_ENV=development
 
@@ -14,7 +13,5 @@ services:
     build: ./frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
     depends_on:
       - backend
