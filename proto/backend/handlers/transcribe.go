@@ -50,7 +50,7 @@ func Transcribe(c *fiber.Ctx) error {
 	}
 
 	// 音声認識処理（）
-	transcribedText := "音声認識結果（）"
+	transcribedText := "音声認識結果（せい）"
 
 	// AudioData 構造体を作成
 	audioData := AudioData{

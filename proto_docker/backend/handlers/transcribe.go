@@ -40,7 +40,7 @@ func Transcribe(c *fiber.Ctx) error {
 	}
 
 	// ここで音声をテキストに変換する処理（仮）
-	transcribedText := "音声認識結果（仮）"
+	transcribedText := "音声認識結果（fu）"
 
 	return c.JSON(fiber.Map{"text": transcribedText})
 }
