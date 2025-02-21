@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 
 	"github.com/gofiber/fiber/v2"
@@ -32,5 +33,10 @@ func main() {
 	app.Post("/transcribe", handlers.Transcribe)
 
 	// サーバー起動
-	log.Fatal(app.Listen(":3001"))
+	//log.Fatal(app.Listen(":3001"))
+
+	// サーバー起動
+	port := ":3001"
+	fmt.Println("🚀 Server is running on http://localhost" + port)
+	log.Fatal(app.Listen(port))
 }

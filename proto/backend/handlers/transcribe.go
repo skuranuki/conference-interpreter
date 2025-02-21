@@ -1,12 +1,20 @@
 package handlers
 
 import (
+	"encoding/json"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
 )
+
+// 音声データをJSONに変換するための構造体
+type AudioData struct {
+	Filename string `json:"filename"`
+	Size     int64  `json:"size"`
+	Type     string `json:"type"`
+}
 
 func Transcribe(c *fiber.Ctx) error {
 	// ファイルを取得
@@ -21,6 +29,7 @@ func Transcribe(c *fiber.Ctx) error {
 		log.Println("一時ファイル作成エラー:", err)
 		return c.Status(500).SendString("一時ファイルの作成に失敗しました")
 	}
+	// ファイルが削除されるのはTranscribeの処理がすべて完了した時
 	defer os.Remove(tempFile.Name())
 
 	fileData, err := file.Open()
@@ -39,8 +48,23 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("ファイルの保存に失敗しました")
 	}
 
-	// ここで音声をテキストに変換する処理（仮）
-	transcribedText := "音声認識結果（仮）"
+	// 音声認識処理（仮）
+	transcribedText := "音声認識結果（）"
 
-	return c.JSON(fiber.Map{"text": transcribedText})
+	// AudioData 構造体を作成
+	audioData := AudioData{
+		Filename: file.Filename,
+		Size:     file.Size,
+		Type:     file.Header.Get("Content-Type"),
+		Text:     transcribedText,
+	}
+
+	// JSON に変換
+	response, err := json.Marshal(audioData)
+	if err != nil {
+		return c.Status(500).SendString("JSON 変換に失敗しました")
+	}
+
+	// JSON を返す
+	return c.Send(response)
 }
