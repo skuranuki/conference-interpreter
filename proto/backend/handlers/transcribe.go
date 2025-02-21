@@ -14,6 +14,7 @@ type AudioData struct {
 	Filename string `json:"filename"`
 	Size     int64  `json:"size"`
 	Type     string `json:"type"`
+	Text     string `json:"text"`
 }
 
 func Transcribe(c *fiber.Ctx) error {
@@ -48,7 +49,7 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("ファイルの保存に失敗しました")
 	}
 
-	// 音声認識処理（仮）
+	// 音声認識処理（）
 	transcribedText := "音声認識結果（）"
 
 	// AudioData 構造体を作成
