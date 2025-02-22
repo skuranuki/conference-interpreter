@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useRef } from "react";
+// 追加
+import { Mic, Square } from "lucide-react";
 
 // Recorderコンポーネントの定義
 //関数型を含むので難しい書き方になっている
@@ -64,8 +66,31 @@ const Recorder = ({ onTranscribe }: { onTranscribe: (text: string) => void }) =>
   return (
     <div>
       {/* 録音状態に応じてボタンの表示を切り替え */}
-      <button onClick={recording ? stopRecording : startRecording}>
+
+      {/* <button onClick={recording ? stopRecording : startRecording}>
         {recording ? "録音停止" : "録音開始"}
+      </button> */}
+      
+      {/* 変更後：スタイリッシュなボタン */}
+      <button
+        onClick={recording ? stopRecording : startRecording}
+        className={`
+          relative flex items-center justify-center
+          w-16 h-16 rounded-full transition-all duration-200
+          ${recording 
+            ? 'bg-red-500 hover:bg-red-600' 
+            : 'bg-blue-500 hover:bg-blue-600'
+          }
+        `}
+      >
+        {recording ? (
+          <>
+            <Square className="w-6 h-6 text-white" />
+            <div className="absolute -inset-2 rounded-full border-4 border-red-500 animate-ping" />
+          </>
+        ) : (
+          <Mic className="w-6 h-6 text-white" />
+        )}
       </button>
     </div>
   );
