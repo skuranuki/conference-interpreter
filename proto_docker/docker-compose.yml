@@ -1,13 +1,20 @@
-
-
 services:
   backend:
     build: ./backend
     ports:
       - "3001:3001"
-
     environment:
-      - GO_ENV=development
+      - VOSK_API_URL=http://vosk-server:2700
+    networks:
+      - app-network
+
+  vosk-server:
+    image: alphacep/kaldi-en:latest
+    platform: linux/amd64 
+    ports:
+      - "2700:2700"
+    networks:
+      - app-network
 
   frontend:
     build: ./frontend
@@ -15,3 +22,9 @@ services:
       - "3000:3000"
     depends_on:
       - backend
+    networks:
+      - app-network
+
+networks:
+  app-network:
+    driver: bridge

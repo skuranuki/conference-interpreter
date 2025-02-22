@@ -1,16 +1,21 @@
+# Golangの公式Alpineベースイメージを使用
 FROM golang:1.24-alpine
 
 WORKDIR /app
 
-COPY go.mod .
-COPY go.sum .
+# 必要なファイルをコピー
+COPY go.mod go.sum ./
 RUN go mod download
 
 COPY . .
 
-# 出力ファイルを明示的に /app/main に指定
+# アプリケーションをビルド
 RUN go build -o /app/main .
 
+# Vosk APIをセットアップ
+RUN apk add --no-cache ffmpeg
+
+# Expose the application port
 EXPOSE 3001
 
 CMD ["/app/main"]
