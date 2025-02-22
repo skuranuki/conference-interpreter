@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 	"log"
+
 	"os"
 
 	"github.com/gofiber/fiber/v2"
@@ -49,8 +50,23 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("ファイルの保存に失敗しました")
 	}
 
-	// 音声認識処理（）
-	transcribedText := "音声認識結果（せい）"
+	// Voskのモデルを初期化
+	modelPath := "path/to/your/vosk/model" // 実際のパスを指定してください
+	model, err := vosk.NewModel(modelPath)
+	if err != nil {
+		log.Println("モデルの読み込みに失敗しました:", err)
+		return c.Status(500).SendString("音声認識モデルの読み込みに失敗しました")
+	}
+	// Voskの認識器を作成
+	recognizer, err := vosk.NewRecognizer(model, 16000.0)
+	if err != nil {
+		log.Println("認識器の作成に失敗しました:", err)
+		return c.Status(500).SendString("音声認識器の作成に失敗しました")
+	}
+	// 後で手動で `recognizer` と `model` のクリーンアップは不要
+
+	// 音声認識処理
+	transcribedText := transcribeWithVosk(tempFile.Name(), recognizer)
 
 	// AudioData 構造体を作成
 	audioData := AudioData{
@@ -68,4 +84,37 @@ func Transcribe(c *fiber.Ctx) error {
 
 	// JSON を返す
 	return c.Send(response)
+}
+
+// 音声ファイルをテキストに変換する関数
+func transcribeWithVosk(filePath string, recognizer *vosk.Recognizer) string {
+	// 音声ファイルを読み取る
+	file, err := os.Open(filePath)
+	if err != nil {
+		log.Println("音声ファイルを開く際のエラー:", err)
+		return "音声認識に失敗しました"
+	}
+	defer file.Close()
+
+	// 認識結果を格納する変数
+	var resultText string
+	buffer := make([]byte, 4000)
+	for {
+		// 音声データを読み取る
+		n, err := file.Read(buffer)
+		if err != nil {
+			break
+		}
+
+		// 認識した音声を処理
+		if recognizer.AcceptWaveform(buffer[:n]) {
+			resultText += recognizer.Result() + "\n"
+		}
+	}
+
+	// 音声認識の最終結果を取得
+	finalResult := recognizer.FinalResult()
+	resultText += finalResult
+
+	return resultText
 }
