@@ -58,7 +58,7 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen px-4 py-8 bg-gray-50 dark:bg-gray-900">
+    <main className="min-h-screen px-4 py-8">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* ヘッダー */}
         <div className="text-center">
@@ -151,36 +151,36 @@ export default function Home() {
         </div>
 
         {/* 議事録セクション */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
-              議事録生成
-            </h2>
-            <button
-              onClick={handleGenerateMinutes}
-              disabled={!transcribedText || isGeneratingMinutes}
-              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-            >
-              生成
-            </button>
-          </div>
-          <div className="relative min-h-32 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-            {isGeneratingMinutes && (
-              <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-900/80 rounded-lg">
-                <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
-              </div>
-            )}
-            {minutesText ? (
-              <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">
-                {minutesText}
-              </p>
-            ) : (
-              <p className="text-gray-500 dark:text-gray-400">
-                生成ボタンを押すと、ここに議事録が表示されます
-              </p>
-            )}
-          </div>
+      <div className="bg-white dark:bg-gray-800 rounded-xl shadow-lg p-6">
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-xl font-semibold text-gray-900 dark:text-white">
+            議事録生成
+          </h2>
+          <button
+            onClick={handleGenerateMinutes}
+            disabled={!transcribedText || isGeneratingMinutes}
+            className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          >
+            生成
+          </button>
         </div>
+        <div className="relative min-h-32 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
+          {isGeneratingMinutes && (
+            <div className="absolute inset-0 flex items-center justify-center bg-gray-50/80 dark:bg-gray-900/80 rounded-lg">
+              <div className="animate-spin h-8 w-8 border-4 border-blue-500 border-t-transparent rounded-full" />
+            </div>
+          )}
+          {minutesText ? (
+            <p className="whitespace-pre-wrap text-gray-700 dark:text-gray-300">
+              {minutesText}
+            </p>
+          ) : (
+            <p className="text-gray-500 dark:text-gray-400">
+              生成ボタンを押すと、ここに議事録が表示されます
+            </p>
+          )}
+        </div>
+      </div>
       </div>
     </main>
   );

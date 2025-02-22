@@ -25,7 +25,7 @@ body {
 @tailwind utilities;
 
 :root {
-  --background: 0 0% 98%;
+  --background: 206 100% 98%;
   --foreground: 240 10% 3.9%;
   --card: 0 0% 100%;
   --card-foreground: 240 10% 3.9%;
@@ -35,7 +35,7 @@ body {
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 222 47% 11%;
     --foreground: 0 0% 98%;
     --card: 240 10% 3.9%;
     --card-foreground: 0 0% 98%;
