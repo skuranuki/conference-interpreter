@@ -4,66 +4,59 @@ import { useState, useRef } from "react";
 import {
   Card,
   CardHeader,
-  Box,
+  Flex,
   IconButton,
   Heading,
-  Flex,
 } from "@chakra-ui/react";
 import { MdMic, MdStop } from "react-icons/md";
 
 interface RecorderProps {
-  onTranscribe: (text: string) => void;
-  onTranscribing: (isTranscribing: boolean) => void;
+  onRecordComplete: (audioBlob: Blob) => void;
 }
 
-export function Recorder({ onTranscribe, onTranscribing }: RecorderProps) {
+export function Recorder({ onRecordComplete }: RecorderProps) {
   const [recording, setRecording] = useState(false);
   const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+  const audioChunksRef = useRef<Blob[]>([]); // 🔹 audioChunks を useRef に変更
+  const streamRef = useRef<MediaStream | null>(null); // 🔹 マイクストリーム管理用
 
-  // 録音開始処理
+  // 🎤 録音開始処理
   const startRecording = async () => {
-    const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    const mediaRecorder = new MediaRecorder(stream);
-    mediaRecorderRef.current = mediaRecorder;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      streamRef.current = stream; // 🔹 ストリームを保存
 
-    const audioChunks: Blob[] = [];
+      const mediaRecorder = new MediaRecorder(stream);
+      mediaRecorderRef.current = mediaRecorder;
 
-    // 音声データ取得時
-    mediaRecorder.ondataavailable = (event) => {
-      audioChunks.push(event.data);
-    };
+      audioChunksRef.current = []; // 🔹 前回のデータをクリア
 
-    // 録音停止時
-    mediaRecorder.onstop = async () => {
-      const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
-      const formData = new FormData();
-      formData.append("audio", audioBlob, "recording.wav");
+      mediaRecorder.ondataavailable = (event) => {
+        audioChunksRef.current.push(event.data);
+      };
 
-      try {
-        onTranscribing(true);
-        const response = await fetch("http://localhost:3001/transcribe", {
-          method: "POST",
-          body: formData,
-          headers: { "Accept": "application/json" },
-          mode: "cors",
-        });
+      mediaRecorder.onstop = () => {
+        const audioBlob = new Blob(audioChunksRef.current, { type: "audio/wav" });
+        onRecordComplete(audioBlob);
 
-        const result = await response.json();
-        onTranscribe(result.text);
-      } catch (error) {
-        console.error("Transcription failed:", error);
-      } finally {
-        onTranscribing(false);
-      }
-    };
+        // 🎤 マイクストリームを停止してリソース解放
+        stream.getTracks().forEach((track) => track.stop());
+        streamRef.current = null;
+      };
 
-    mediaRecorder.start();
-    setRecording(true);
+      mediaRecorder.start();
+      setRecording(true);
+    } catch (error) {
+      console.error("マイクへのアクセスに失敗しました:", error);
+    }
   };
 
+  // ⏹️ 録音停止処理
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop();
-    setRecording(false);
+    if (mediaRecorderRef.current && recording) {
+      mediaRecorderRef.current.stop();
+      setRecording(false);
+    }
   };
 
   return (
