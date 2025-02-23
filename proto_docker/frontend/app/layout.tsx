@@ -55,7 +55,7 @@ export default function RootLayout({
   return (
     <html lang="ja" className={inter.variable}>
       <body className="font-sans antialiased">
-      <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
+        <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
           {children}
         </div>
       </body>

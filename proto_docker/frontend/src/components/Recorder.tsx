@@ -64,7 +64,7 @@ const Recorder = ({ onTranscribe }: { onTranscribe: (text: string) => void }) =>
   };
 
   return (
-    <div>
+    <div className="flex justify-end">
       {/* 録音状態に応じてボタンの表示を切り替え */}
 
       {/* <button onClick={recording ? stopRecording : startRecording}>
