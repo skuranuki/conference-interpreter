@@ -47,6 +47,7 @@ export default function Home() {
        setTranscribedText(result.text);
        setTranslatedEnglish(result.translation_en);
        setTranslatedSpanish(result.translation_es);
+       setMinutesText(result.sum);
      } catch (error) {
        console.error("Transcription failed:", error);
      } finally {
@@ -82,7 +83,7 @@ export default function Home() {
            <MinutesCard 
              text={minutesText}
              isLoading={isGeneratingMinutes}
-             onGenerate={() => setMinutesText(transcribedText)}
+             onGenerate={() => setMinutesText(minutesText)}
              disabled={!transcribedText}
            />
          </VStack>

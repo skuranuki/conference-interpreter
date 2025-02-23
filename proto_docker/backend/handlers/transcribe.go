@@ -79,10 +79,19 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("スペイン語への翻訳中にエラーが発生しました")
 	}
 
+	summaryTranslation, err := SummarizeText(client, ctx, transcribedText)
+	if err != nil {
+		log.Println("スペイン語翻訳エラー:", err)
+		return c.Status(500).SendString("スペイン語への翻訳中にエラーが発生しました")
+	}
+
+	fmt.Printf("要約文: %s\n", summaryTranslation)
+
 	// 🔹 JSON レスポンスとして返す
 	return c.JSON(fiber.Map{
 		"text":           transcribedText,
 		"translation_en": englishTranslation,
 		"translation_es": spanishTranslation,
+		"sum":            summaryTranslation,
 	})
 }
