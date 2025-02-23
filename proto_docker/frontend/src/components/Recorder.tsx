@@ -1,99 +1,86 @@
 "use client";
 
 import { useState, useRef } from "react";
-// 追加
-import { Mic, Square } from "lucide-react";
+import {
+  Card,
+  CardHeader,
+  Box,
+  IconButton,
+  Heading,
+  Flex,
+} from "@chakra-ui/react";
+import { MdMic, MdStop } from "react-icons/md";
 
-// Recorderコンポーネントの定義
-//関数型を含むので難しい書き方になっている
-const Recorder = ({ onTranscribe }: { onTranscribe: (text: string) => void }) => {
-  const [recording, setRecording] = useState(false); // 録音状態を管理するステート
-  const mediaRecorderRef = useRef<MediaRecorder | null>(null); // MediaRecorderの参照を保持
+interface RecorderProps {
+  onTranscribe: (text: string) => void;
+  onTranscribing: (isTranscribing: boolean) => void;
+}
 
-  // 録音開始関数
+export function Recorder({ onTranscribe, onTranscribing }: RecorderProps) {
+  const [recording, setRecording] = useState(false);
+  const mediaRecorderRef = useRef<MediaRecorder | null>(null);
+
+  // 録音開始処理
   const startRecording = async () => {
-    // マイクの音声ストリームを取得
     const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-    // MediaRecorderを作成
     const mediaRecorder = new MediaRecorder(stream);
     mediaRecorderRef.current = mediaRecorder;
 
-    const audioChunks: Blob[] = []; // 音声データのチャンクを保持する配列
+    const audioChunks: Blob[] = [];
 
-    // 音声データが利用可能になったときのイベントハンドラ
+    // 音声データ取得時
     mediaRecorder.ondataavailable = (event) => {
-      audioChunks.push(event.data); // 音声データのチャンクを配列に追加
+      audioChunks.push(event.data);
     };
 
-    // 録音が停止したときのイベントハンドラ
+    // 録音停止時
     mediaRecorder.onstop = async () => {
-      // チャンクを結合してBlobを作成この辺はよう分からん
       const audioBlob = new Blob(audioChunks, { type: "audio/wav" });
       const formData = new FormData();
-      // フォームデータに音声ファイルを追加
       formData.append("audio", audioBlob, "recording.wav");
 
       try {
-        // サーバーに音声ファイルを送信
+        onTranscribing(true);
         const response = await fetch("http://localhost:3001/transcribe", {
           method: "POST",
           body: formData,
-          headers: {
-            "Accept": "application/json",
-          },
-          mode: "cors", // CORS設定
+          headers: { "Accept": "application/json" },
+          mode: "cors",
         });
 
-        // サーバーからのレスポンスをJSONとしてパース
         const result = await response.json();
-        // テキストをコールバック関数に渡す
         onTranscribe(result.text);
       } catch (error) {
-        console.error("Transcription failed:", error); // エラーハンドリング
+        console.error("Transcription failed:", error);
+      } finally {
+        onTranscribing(false);
       }
     };
 
-    mediaRecorder.start(); // 録音開始
-    setRecording(true); // 録音状態を更新
+    mediaRecorder.start();
+    setRecording(true);
   };
 
-  // 録音停止関数
   const stopRecording = () => {
-    mediaRecorderRef.current?.stop(); // 録音停止
-    setRecording(false); // 録音状態を更新
+    mediaRecorderRef.current?.stop();
+    setRecording(false);
   };
 
   return (
-    <div className="flex justify-end">
-      {/* 録音状態に応じてボタンの表示を切り替え */}
-
-      {/* <button onClick={recording ? stopRecording : startRecording}>
-        {recording ? "録音停止" : "録音開始"}
-      </button> */}
-      
-      {/* 変更後：スタイリッシュなボタン */}
-      <button
-        onClick={recording ? stopRecording : startRecording}
-        className={`
-          relative flex items-center justify-center
-          w-16 h-16 rounded-full transition-all duration-200
-          ${recording 
-            ? 'bg-red-500 hover:bg-red-600' 
-            : 'bg-blue-500 hover:bg-blue-600'
-          }
-        `}
-      >
-        {recording ? (
-          <>
-            <Square className="w-6 h-6 text-white" />
-            <div className="absolute -inset-2 rounded-full border-4 border-red-500 animate-ping" />
-          </>
-        ) : (
-          <Mic className="w-6 h-6 text-white" />
-        )}
-      </button>
-    </div>
+    <Card w="full">
+      <CardHeader>
+        <Flex justify="space-between" align="center">
+          <Heading size="md">録音</Heading>
+          <IconButton
+            aria-label={recording ? "録音停止" : "録音開始"}
+            icon={recording ? <MdStop /> : <MdMic />}
+            onClick={recording ? stopRecording : startRecording}
+            colorScheme={recording ? "red" : "blue"}
+            isRound
+            size="lg"
+          />
+        </Flex>
+      </CardHeader>
+    </Card>
   );
-};
-
-export default Recorder;
+}
