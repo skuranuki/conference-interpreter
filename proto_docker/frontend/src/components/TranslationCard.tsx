@@ -4,6 +4,7 @@ import {
   CardBody,
   Heading,
   Select,
+  Button,
   Text,
   Box,
   Flex,
@@ -26,6 +27,7 @@ export function TranslationCard({
 }: TranslationCardProps) {
 
 const [selectedLanguage, setSelectedLanguage] = useState("en");
+const [showTranslation, setShowTranslation] = useState(false);
 
 // 選択された言語に応じた翻訳テキストを取得
 const getTranslatedText = () => {
@@ -34,22 +36,46 @@ if (selectedLanguage === "es") return translatedSpanish;
 return "";
 };
 
+// 言語変更時の処理
+const handleLanguageChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedLanguage(e.target.value);
+    setShowTranslation(false); // 言語変更時に翻訳表示をリセット
+};
+
+  // 翻訳ボタンクリック時の処理
+const handleTranslateClick = () => {
+    setShowTranslation(true);
+};
+
 return (
     <Card w="full">
       <CardHeader>
         <Flex justify="space-between" align="center">
           <Heading size="md">翻訳</Heading>
-          {/* 言語選択 */}
-          <Select
-            w="auto"
-            size="sm"
-            value={selectedLanguage}
-            onChange={(e) => setSelectedLanguage(e.target.value)}
-            isDisabled={disabled || isLoading}
-          >
-            <option value="en">英語</option>
-            <option value="es">スペイン語</option>
-          </Select>
+          <Flex gap={2} align="center">
+            {/* 言語選択 */}
+            <Select
+                w="auto"
+                size="sm"
+                value={selectedLanguage}
+                onChange={handleLanguageChange}
+                // onChange={(e) => setSelectedLanguage(e.target.value)}
+                isDisabled={disabled || isLoading}
+            >
+                <option value="en">英語</option>
+                <option value="es">スペイン語</option>
+            </Select>
+            {/* ボタン */}
+            <Button
+                size="sm"
+                colorScheme="blue"
+                onClick={handleTranslateClick}
+                isDisabled={disabled || isLoading}
+                isLoading={isLoading}
+                >
+                翻訳
+            </Button>
+          </Flex>         
         </Flex>
       </CardHeader>
 
@@ -65,12 +91,13 @@ return (
           {/* テキスト表示 */}
           {!isLoading && (
             <Text color={"gray.700"}>
-              {getTranslatedText() || "ここに翻訳結果が表示されます"}
+              {showTranslation 
+                ? getTranslatedText() 
+                : "翻訳ボタンを押して翻訳を表示"}
             </Text>
           )}
         </Box>
       </CardBody>
-
     </Card>  
 );
 }
