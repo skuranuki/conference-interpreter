@@ -16,16 +16,14 @@ import { MinutesCard } from "@/components/MinutesCard";
 export default function Home() {
   // 状態管理
   const [transcribedText, setTranscribedText] = useState("");  
-  const [translatedText, setTranslatedText] = useState("");    
+  const [translatedEnglish, setTranslatedEnglish] = useState("");    
+  const [translatedSpanish, setTranslatedSpanish] = useState("");    
   const [minutesText, setMinutesText] = useState("");         
   
   const [isTranscribing, setIsTranscribing] = useState(false); 
-  const [isTranslating, setIsTranslating] = useState(false);   
-  
-const [isGeneratingMinutes, setIsGeneratingMinutes] =
-useState(false);
+  const [isGeneratingMinutes, setIsGeneratingMinutes] = useState(false);
 
-   // 音声データの送信と文字起こし処理
+   // 🎤 音声データの送信と文字起こし & 翻訳処理
    const handleAudioUploadAndTranscribe = async (audioBlob: Blob) => {
      setIsTranscribing(true);
 
@@ -42,8 +40,13 @@ useState(false);
 
        if (!response.ok) throw new Error("Failed to transcribe");
 
+       // 🔹 JSON レスポンスを取得
        const result = await response.json();
+
+       // 🔹 各言語の翻訳結果をセット
        setTranscribedText(result.text);
+       setTranslatedEnglish(result.translation_en);
+       setTranslatedSpanish(result.translation_es);
      } catch (error) {
        console.error("Transcription failed:", error);
      } finally {
@@ -64,15 +67,18 @@ useState(false);
            {/* 各機能コンポーネント */}
            <Recorder onRecordComplete={handleAudioUploadAndTranscribe} />
 
-                     <TranscriptionCard text={transcribedText} isLoading={isTranscribing} />
+           {/* 日本語の文字起こし結果 */}
+           <TranscriptionCard text={transcribedText} isLoading={isTranscribing} />
 
+           {/* 翻訳 */}
            <TranslationCard 
-             text={translatedText}
-             isLoading={isTranslating}
-             onTranslate={(lang) => setTranslatedText(transcribedText)} 
+             translatedEnglish={translatedEnglish}
+             translatedSpanish={translatedSpanish}
+             isLoading={isTranscribing}
              disabled={!transcribedText}
            />
 
+           {/* 議事録生成カード */}
            <MinutesCard 
              text={minutesText}
              isLoading={isGeneratingMinutes}

@@ -1,18 +1,17 @@
 package handlers
 
 import (
+	"context"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-
-	"context"
-	"fmt"
-
 	"github.com/sashabaranov/go-openai"
 )
 
+// Transcribe は音声ファイルをテキストに変換し、英語とスペイン語に翻訳する
 func Transcribe(c *fiber.Ctx) error {
 	// ファイルを取得
 	file, err := c.FormFile("audio")
@@ -26,7 +25,7 @@ func Transcribe(c *fiber.Ctx) error {
 		log.Println("一時ファイル作成エラー:", err)
 		return c.Status(500).SendString("一時ファイルの作成に失敗しました")
 	}
-	//defer os.Remove(tempFile.Name())
+	defer os.Remove(tempFile.Name()) // 処理終了後に削除
 
 	fileData, err := file.Open()
 	if err != nil {
@@ -39,14 +38,11 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("ファイルの読み込みに失敗しました")
 	}
 
-	_, err = tempFile.Write(data)
-	if err != nil {
+	if _, err = tempFile.Write(data); err != nil {
 		return c.Status(500).SendString("ファイルの保存に失敗しました")
 	}
 
-	// ファイル名を取得
-	fileName := tempFile.Name()
-	fmt.Println("アップロードされたファイル名:", fileName)
+	fmt.Println("アップロードされたファイル名:", tempFile.Name())
 
 	ctx := context.Background()
 
@@ -59,16 +55,34 @@ func Transcribe(c *fiber.Ctx) error {
 
 	req := openai.AudioRequest{
 		Model:    openai.Whisper1,
-		FilePath: fileName, // ファイルを指定
+		FilePath: tempFile.Name(),
 	}
 	res, err := client.CreateTranscription(ctx, req)
 	if err != nil {
-		log.Fatalf("Error: %s", err.Error())
+		log.Println("文字起こしエラー:", err)
+		return c.Status(500).SendString("文字起こし処理中にエラーが発生しました")
 	}
-	fmt.Printf("text: %s", res.Text)
 
-	// ここで音声をテキストに変換する処理（仮）
 	transcribedText := res.Text
+	fmt.Printf("Transcribed text: %s\n", transcribedText)
 
-	return c.JSON(fiber.Map{"text": transcribedText})
+	// 🔹 翻訳処理（英語 & スペイン語）
+	englishTranslation, err := TranslateText(client, ctx, transcribedText, "English")
+	if err != nil {
+		log.Println("英語翻訳エラー:", err)
+		return c.Status(500).SendString("英語への翻訳中にエラーが発生しました")
+	}
+
+	spanishTranslation, err := TranslateText(client, ctx, transcribedText, "Spanish")
+	if err != nil {
+		log.Println("スペイン語翻訳エラー:", err)
+		return c.Status(500).SendString("スペイン語への翻訳中にエラーが発生しました")
+	}
+
+	// 🔹 JSON レスポンスとして返す
+	return c.JSON(fiber.Map{
+		"text":           transcribedText,
+		"translation_en": englishTranslation,
+		"translation_es": spanishTranslation,
+	})
 }
