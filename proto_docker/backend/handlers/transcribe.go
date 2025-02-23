@@ -1,32 +1,31 @@
+// handlers/transcribe.go
+
 package handlers
 
 import (
+	"context"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"os"
 
 	"github.com/gofiber/fiber/v2"
-
-	"context"
-	"fmt"
-
 	"github.com/sashabaranov/go-openai"
 )
 
 func Transcribe(c *fiber.Ctx) error {
-	// ファイルを取得
+	targetLang := c.Query("lang", "en")
 	file, err := c.FormFile("audio")
 	if err != nil {
 		return c.Status(400).SendString("音声ファイルの取得に失敗しました")
 	}
 
-	// 一時ファイルとして保存
 	tempFile, err := os.CreateTemp("", "audio-*.wav")
 	if err != nil {
 		log.Println("一時ファイル作成エラー:", err)
 		return c.Status(500).SendString("一時ファイルの作成に失敗しました")
 	}
-	//defer os.Remove(tempFile.Name())
+	defer os.Remove(tempFile.Name())
 
 	fileData, err := file.Open()
 	if err != nil {
@@ -44,31 +43,33 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("ファイルの保存に失敗しました")
 	}
 
-	// ファイル名を取得
-	fileName := tempFile.Name()
-	fmt.Println("アップロードされたファイル名:", fileName)
-
-	ctx := context.Background()
-
 	token := os.Getenv("SPEECH_TO_TEXT_API_KEY")
 	if token == "" {
-		log.Println("APIキーが設定されていません")
 		return c.Status(500).SendString("APIキーが設定されていません")
 	}
 	client := openai.NewClient(token)
 
+	ctx := context.Background()
 	req := openai.AudioRequest{
 		Model:    openai.Whisper1,
-		FilePath: fileName, // ファイルを指定
+		FilePath: tempFile.Name(),
 	}
 	res, err := client.CreateTranscription(ctx, req)
 	if err != nil {
-		log.Fatalf("Error: %s", err.Error())
+		return c.Status(500).SendString("音声テキスト変換に失敗しました")
 	}
-	fmt.Printf("text: %s", res.Text)
 
-	// ここで音声をテキストに変換する処理（仮）
 	transcribedText := res.Text
+	fmt.Println("Transcribed Text:", transcribedText)
 
-	return c.JSON(fiber.Map{"text": transcribedText})
+	translatedText, err := TranslateText(client, ctx, transcribedText, targetLang)
+	if err != nil {
+		return c.Status(500).SendString("翻訳に失敗しました")
+	}
+	fmt.Println("Translated Text:", translatedText)
+
+	return c.JSON(fiber.Map{
+		"transcribed_text": transcribedText,
+		"translated_text":  translatedText,
+	})
 }
