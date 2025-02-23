@@ -61,7 +61,7 @@ export default function Home() {
          <VStack spacing={8}>
            {/* ヘッダー */}
            <Box textAlign="center">
-             <Heading mb={2}>音声文字起こし</Heading>
+             <Heading mb={2}>VOICING</Heading>
              <Text color="gray.600">録音ボタンを押して話しかけてください</Text>
            </Box>
 
