@@ -2,14 +2,30 @@ package main
 
 import (
 	"log"
+	"os"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors" // CORSミドルウェアをインポート
 
 	"project-root/backend/handlers"
+
+	"github.com/joho/godotenv"
 )
 
 func main() {
+	// .envファイルの読み込み
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	// 環境変数の確認（デバッグ用）
+	apiKey := os.Getenv("SPEECH_TO_TEXT_API_KEY")
+	if apiKey == "" {
+		log.Fatal("SPEECH_TO_TEXT_API_KEY is not set")
+	}
+	log.Println("API Key Loaded Successfully!")
+
 	app := fiber.New()
 
 	// CORS を有効化
