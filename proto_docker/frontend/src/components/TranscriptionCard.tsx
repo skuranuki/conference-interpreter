@@ -16,7 +16,11 @@ import {
   
   export function TranscriptionCard({ text, isLoading }: TranscriptionCardProps) {
     return (
-      <Card w="full">
+      <Card w="full"
+            transition="transform 0.2s"
+            _hover={{ transform: 'scale(1.2)' }}
+            cursor="pointer"
+        >
         <CardHeader>
           <Heading size="md">文字起こし結果</Heading>
         </CardHeader>

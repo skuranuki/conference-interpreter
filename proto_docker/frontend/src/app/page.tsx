@@ -7,11 +7,25 @@ import {
   Heading,
   Text,
   VStack,
+  Flex,
 } from "@chakra-ui/react";
 import { Recorder } from "@/components/Recorder";
 import { TranscriptionCard } from "@/components/TranscriptionCard";
 import { TranslationCard } from "@/components/TranslationCard";
 import { MinutesCard } from "@/components/MinutesCard";
+import { FC } from 'react';
+import NextLink from "next/link";
+ 
+// ✅ フッターコンポーネント
+const Footer: FC = () => {
+  return (
+    <Box as="footer" bgGradient="linear(to-t, gray.200, white)" py={4} textAlign="center" >
+      <Text fontSize="sm" color="gray.600">
+        © 2025 VOICING. All rights reserved.
+      </Text>
+    </Box>
+  );
+};
 
 export default function Home() {
   // 状態管理
@@ -55,14 +69,35 @@ export default function Home() {
    };
 
    return (
-     <Box as="main" minH="100vh" py={8} px={4}>
-       <Container maxW="2xl">
+    <><Box px={4} bgGradient="linear(to-t, gray.200, white)">
+          <Container maxW="container.lg">
+            <Flex as="header" py="4" justifyContent="space-between"  alignItems="center">
+              <NextLink href="/" passHref>
+                <Heading as='h1' fontSize="1xl" cursor="pointer" color="blue.300">
+                  SPARTA
+                </Heading>
+                
+              </NextLink>
+            </Flex>
+          </Container>
+        </Box>
+
+     <Box as="main" display="flex" py={8} px={4} bgColor="blue.300" flexDirection="column" minH="100vh">
+       <Container maxW="2xl" flex='1'>
          <VStack spacing={8}>
            {/* ヘッダー */}
-           <Box textAlign="center">
+           {/* <Box textAlign="center">
              <Heading mb={2}>VOICING</Heading>
              <Text color="gray.600">録音ボタンを押して話しかけてください</Text>
-           </Box>
+           </Box> */}
+
+           <Box 
+            textAlign="center"
+          >
+            
+            <Heading mb={2} color="white" fontSize="6xl" fontStyle="italic">𝕧𝕠𝕚𝕔𝕚𝕟𝕘</Heading>
+            <Text color="gray.600">録音ボタンを押して話しかけてください</Text>
+          </Box>
 
            {/* 各機能コンポーネント */}
            <Recorder onRecordComplete={handleAudioUploadAndTranscribe} />
@@ -88,5 +123,7 @@ export default function Home() {
          </VStack>
        </Container>
      </Box>
+     <Footer/>
+    </>
    );
  }

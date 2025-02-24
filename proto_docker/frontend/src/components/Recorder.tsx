@@ -60,7 +60,11 @@ export function Recorder({ onRecordComplete }: RecorderProps) {
   };
 
   return (
-    <Card w="full">
+    <Card w="full"
+            transition="transform 0.2s"
+            _hover={{ transform: 'scale(1.2)' }}
+            cursor="pointer"
+        >
       <CardHeader>
         <Flex justify="space-between" align="center">
           <Heading size="md">録音</Heading>

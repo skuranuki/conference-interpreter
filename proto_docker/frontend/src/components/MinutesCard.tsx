@@ -37,7 +37,11 @@ import {
     };
 
     return (
-      <Card w="full">
+      <Card w="full"
+            transition="transform 0.2s"
+            _hover={{ transform: 'scale(1.2)' }}
+            cursor="pointer"
+        >
         <CardHeader>
           <Flex justify="space-between" align="center">
             <Heading size="md">議事録生成</Heading>
