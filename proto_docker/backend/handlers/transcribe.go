@@ -85,7 +85,7 @@ func Transcribe(c *fiber.Ctx) error {
 		return c.Status(500).SendString("スペイン語への翻訳中にエラーが発生しました")
 	}
 
-	fmt.Printf("要約文: %s\n", summaryTranslation)
+	fmt.Printf("要約文: %q\n", summaryTranslation)
 
 	// 🔹 JSON レスポンスとして返す
 	return c.JSON(fiber.Map{

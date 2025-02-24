@@ -81,8 +81,9 @@ export default function Home() {
 
            {/* 議事録生成カード */}
            <MinutesCard 
-             text={minutesText}
-             isLoading={isGeneratingMinutes}
+            text={minutesText}
+            //text={minutesText.replace(/\n/g, "<br />")} 
+            isLoading={isGeneratingMinutes}
              onGenerate={() => setMinutesText(minutesText)}
              disabled={!transcribedText}
            />
