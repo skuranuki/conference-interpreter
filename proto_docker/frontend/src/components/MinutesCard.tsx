@@ -9,20 +9,33 @@ import {
     Flex,
     Spinner,
   } from "@chakra-ui/react";
-  
+  import { useState } from "react";
+
   interface MinutesCardProps {
     text: string;      // 議事録テキスト
-    isLoading: boolean; // ローディング状態
-    onGenerate: () => void; // 生成実行関数
-    disabled: boolean;  // ボタン無効化状態
+    disabled: boolean;
+    onGenerate: () => Promise<void>;
   }
   
   export function MinutesCard({ 
     text, 
-    isLoading, 
     onGenerate, 
     disabled 
   }: MinutesCardProps) {
+
+    const [isGenerating, setIsGenerating] = useState(false);
+    const [showMinutes, setShowMinutes] = useState(false);
+  
+    const handleGenerateClick = async () => {
+      setIsGenerating(true);
+      try {
+        await onGenerate();
+        setShowMinutes(true);
+      } finally {
+        setIsGenerating(false);
+      }
+    };
+
     return (
       <Card w="full">
         <CardHeader>
@@ -31,8 +44,9 @@ import {
             <Button
               colorScheme="blue"
               size="sm"
-              onClick={onGenerate}
-              isDisabled={disabled || isLoading}
+              onClick={handleGenerateClick}
+              isDisabled={disabled || isGenerating}
+              isLoading={isGenerating}
             >
               生成
             </Button>
@@ -47,7 +61,7 @@ import {
             borderRadius="lg"
           >
             {/* ローディング表示 */}
-            {isLoading && (
+            {isGenerating && (
               <Flex
                 position="absolute"
                 inset={0}
@@ -65,8 +79,8 @@ import {
               </Flex>
             )}
             {/* テキスト表示 */}
-            <Text color={text ? "gray.700" : "gray.500"}>
-              {text || "生成ボタンを押すと、ここに議事録が表示されます"}
+            <Text color={showMinutes && text ? "gray.700" : "gray.500"}>
+                {showMinutes && text ? text : "生成ボタンを押すと、ここに議事録が表示されます"}
             </Text>
           </Box>
         </CardBody>

@@ -21,7 +21,6 @@ export default function Home() {
   const [minutesText, setMinutesText] = useState("");         
   
   const [isTranscribing, setIsTranscribing] = useState(false); 
-  const [isGeneratingMinutes, setIsGeneratingMinutes] = useState(false);
 
    // 🎤 音声データの送信と文字起こし & 翻訳処理
    const handleAudioUploadAndTranscribe = async (audioBlob: Blob) => {
@@ -61,7 +60,7 @@ export default function Home() {
          <VStack spacing={8}>
            {/* ヘッダー */}
            <Box textAlign="center">
-             <Heading mb={2}>音声文字起こし</Heading>
+             <Heading mb={2}>VOICING</Heading>
              <Text color="gray.600">録音ボタンを押して話しかけてください</Text>
            </Box>
 
@@ -75,16 +74,16 @@ export default function Home() {
            <TranslationCard 
              translatedEnglish={translatedEnglish}
              translatedSpanish={translatedSpanish}
-             isLoading={isTranscribing}
+             isLoading={false}
              disabled={!transcribedText}
+             onTranslate={() => Promise.resolve()}
            />
 
            {/* 議事録生成カード */}
            <MinutesCard 
              text={minutesText}
-             isLoading={isGeneratingMinutes}
-             onGenerate={() => setMinutesText(minutesText)}
              disabled={!transcribedText}
+             onGenerate={() => Promise.resolve()}
            />
          </VStack>
        </Container>

@@ -2,7 +2,7 @@ import { Providers } from './providers'
 
 // src/app/layout.tsx
 export const metadata = {
-  title: "音声文字起こしアプリ",
+  title: "VOICING",
   description: "音声を自動で文字に起こすアプリケーション",
 };
 
