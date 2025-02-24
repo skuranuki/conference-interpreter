@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"log"
+	"strings"
 
 	"github.com/sashabaranov/go-openai"
 )
@@ -10,7 +11,7 @@ import (
 // SummarizeText は与えられたテキストを要約します。
 func SummarizeText(client *openai.Client, ctx context.Context, text string) (string, error) {
 	// 要約のためのプロンプトを作成
-	prompt := "
+	prompt := `
 	あなたは、会議レポート作成が得意なビジネスマンです。
 以下の文字起こしテキストから、会議のレポートを生成してください。
 
@@ -36,23 +37,25 @@ for 議題 in 議題リスト:
 
 ## {議題タイトル}
 
-提起者： {提起者}  
+**提起者:** {提起者}  
 
-カテゴリー： {カテゴリー}  
+**カテゴリー:** {カテゴリー}  
 
-議論内容  
+**タイムスタンプ:** {タイムスタンプ}  
+
+**議論内容:**  
 {具体的な議論内容}  
 
-結論  
+**結論:**  
 {結論}  
 
-ネクストアクション 
+**ネクストアクション:**  
 {ネクストアクション}  
 
 ---
 
 以下のテキストから要約してください：
-	" + text
+	` + text
 
 	// OpenAI GPT-4 を使って要約リクエストを送信
 	summarizeResp, err := client.CreateChatCompletion(ctx, openai.ChatCompletionRequest{
@@ -66,6 +69,12 @@ for 議題 in 議題リスト:
 		return "", err             // エラーを返す
 	}
 
-	// 要約されたテキストを返す
-	return summarizeResp.Choices[0].Message.Content, nil
+	// 生成されたテキストを取得
+	summary := summarizeResp.Choices[0].Message.Content
+
+	// **一行おきに改行を入れる処理**
+	formattedSummary := strings.ReplaceAll(summary, "\n", "\n\n")
+
+	// 整形後の要約を返す
+	return formattedSummary, nil
 }
