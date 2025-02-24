@@ -7,11 +7,28 @@ import {
   Heading,
   Text,
   VStack,
+  
+  Flex,
+   
 } from "@chakra-ui/react";
+import NextLink from "next/link";
+import { FC } from 'react';
 import { Recorder } from "@/components/Recorder";
 import { TranscriptionCard } from "@/components/TranscriptionCard";
 import { TranslationCard } from "@/components/TranslationCard";
 import { MinutesCard } from "@/components/MinutesCard";
+
+
+// ✅ フッターコンポーネント
+const Footer: FC = () => {
+  return (
+    <Box as="footer" bg="gray.100" py={4} textAlign="center" >
+      <Text fontSize="sm" color="gray.600">
+        © 2025 VOICING. All rights reserved.
+      </Text>
+    </Box>
+  );
+};
 
 export default function Home() {
   // 状態管理
@@ -56,38 +73,49 @@ export default function Home() {
    };
 
    return (
-     <Box as="main" minH="100vh" py={8} px={4}>
-       <Container maxW="2xl">
-         <VStack spacing={8}>
-           {/* ヘッダー */}
-           <Box textAlign="center">
-             <Heading mb={2}>音声文字起こし</Heading>
-             <Text color="gray.600">録音ボタンを押して話しかけてください</Text>
-           </Box>
-
-           {/* 各機能コンポーネント */}
-           <Recorder onRecordComplete={handleAudioUploadAndTranscribe} />
-
-           {/* 日本語の文字起こし結果 */}
-           <TranscriptionCard text={transcribedText} isLoading={isTranscribing} />
-
-           {/* 翻訳 */}
-           <TranslationCard 
-             translatedEnglish={translatedEnglish}
-             translatedSpanish={translatedSpanish}
-             isLoading={isTranscribing}
-             disabled={!transcribedText}
-           />
-
-           {/* 議事録生成カード */}
-           <MinutesCard 
-             text={minutesText}
-             isLoading={isGeneratingMinutes}
-             onGenerate={() => setMinutesText(minutesText)}
-             disabled={!transcribedText}
-           />
-         </VStack>
+    <><Box px={4} bgColor="white">
+       <Container maxW="container.lg">
+         <Flex as="header" py="4" justifyContent="space-between"  alignItems="center">
+           <NextLink href="/" passHref>
+             <Heading as='h1' fontSize="1xl" cursor="pointer" color="blue.300">
+              SPARTA
+             </Heading>
+             
+           </NextLink>
+         </Flex>
        </Container>
-     </Box>
+     </Box><Box as="main" py={8} px={4} bgColor="blue.300" display="flex" flexDirection="column">
+     <Container maxW="2xl" flex="1">
+           <VStack spacing={8}>
+             {/* ヘッダー */}
+             <Box textAlign="center">
+             <Heading mb={2} color="white" fontStyle="italic">𝕧𝕠𝕚𝕔𝕚𝕟𝕘</Heading>
+             <Text color="gray.600">録音ボタンを押して話しかけてください</Text>
+             </Box>
+
+             {/* 各機能コンポーネント */}
+             <Recorder onRecordComplete={handleAudioUploadAndTranscribe} />
+
+             {/* 日本語の文字起こし結果 */}
+             <TranscriptionCard text={transcribedText} isLoading={isTranscribing} />
+
+             {/* 翻訳 */}
+             <TranslationCard
+               translatedEnglish={translatedEnglish}
+               translatedSpanish={translatedSpanish}
+               isLoading={isTranscribing}
+               disabled={!transcribedText} />
+
+             {/* 議事録生成カード */}
+             <MinutesCard
+               text={minutesText}
+               isLoading={isGeneratingMinutes}
+               onGenerate={() => setMinutesText(minutesText)}
+               disabled={!transcribedText} />
+           </VStack>
+         </Container>
+       </Box>
+       <Footer/>
+       </>
    );
  }
