@@ -79,7 +79,7 @@ import {
               </Flex>
             )}
             {/* テキスト表示 */}
-            <Text color={showMinutes && text ? "gray.700" : "gray.500"}>
+            <Text color={showMinutes && text ? "gray.700" : "gray.500"} whiteSpace="pre-wrap">
                 {showMinutes && text ? text : "生成ボタンを押すと、ここに議事録が表示されます"}
             </Text>
           </Box>
