@@ -10,7 +10,7 @@
 Goのinstall（後でdockerで実装）
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-この行いらない？
+
 echo 'eval "$(/opt/homebrew/bin/brew shellenv)"' >> ~/.zprofile
 
 eval "$(/opt/homebrew/bin/brew shellenv)"
@@ -63,5 +63,3 @@ project-root/
 └── docker-compose.yml  # コンテナ管理（後で追加可）
 ```
 
-
-わお
